@@ -13,7 +13,7 @@ bash <(curl https://nixos.org/nix/install)
 Ajout du dernier repo stable contenant les paquets voulus
 
 ```
-nix-channel --add https://nixos.org/channels/nixos-17.09 nixos
+nix-channel --add https://nixos.org/channels/nixos-18.09 nixos
 nix-channel --update
 ```
 

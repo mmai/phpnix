@@ -1,9 +1,5 @@
 with import <nixpkgs> { };
 
-# XXX Actuellement en php 7.1 pour bénéficier de xdebug
-# pour rétablir 7.0 comme en prod : utiliser la ligne suivante pour lancer php-fpm : 
-# ${pkgs.php70}/bin/php-fpm -p ${phpDir} -y ${phpConf} -c ${phpIni}
-
 let
   cfg =
     if builtins.pathExists ./nixfiles/config.nix
@@ -19,7 +15,6 @@ let
   mysqlDir  = "${rootDir}/nixfiles/mysql";
 
   mysqlConf     = (import ./nixfiles/mysql/mysql.conf.nix) {inherit pkgs mysqlDir; mysqlPort                = cfg.mysqlPort; };
-  php71-env-cli = (import ./nixfiles/php/php71-env-cli.nix) {inherit pkgs stdenv phpIni; };
   phpConf       = (import ./nixfiles/php/phpfpm-nginx.conf.nix) {inherit pkgs phpDir ;};
   phpIni        = (import ./nixfiles/php/phpini.nix) {inherit pkgs ;};
   nginxConf     = (import ./nixfiles/nginx/nginx.conf.nix) {inherit pkgs nginxDir rootDir phpDir; nginxPort = cfg.nginxPort; };
@@ -28,7 +23,7 @@ in
 stdenv.mkDerivation rec {
   name = "mywebapp-${version}";
   version = "0.1.0";
-  buildInputs = (with pkgs; [ phpPackages.composer nginx mysql ]) ++ [ php71-env-cli ]; 
+  buildInputs = (with pkgs; [ phpPackages.xdebug phpPackages.composer nginx mysql ]); 
 
   shellHook = ''
     function startServices {
