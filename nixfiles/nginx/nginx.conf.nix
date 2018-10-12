@@ -11,7 +11,7 @@ let
     root ${path}/;
 
     location / {
-      try_files $uri /app.php$is_args$args;
+      index index.php;
     }
 
     location ~ (^/php/|\.php$) {
@@ -22,13 +22,12 @@ let
       include ${fastcgiParamsFile};
       fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
       fastcgi_param DOCUMENT_ROOT $document_root;
-
     }
 
     access_log ${nginxDir}/logs/${domain}_access.log;
     error_log ${nginxDir}/logs/${domain}_error.log;
   }
-     '';
+    '';
 
 in
 

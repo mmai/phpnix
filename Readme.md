@@ -1,48 +1,59 @@
 # PHP NIX
 
-## Environnement de développement PHP Mysql avec Nix (pour linux et mac)
+[Voir la version française](Readme.fr.md)
 
-La configuration de l'environnement de développement est définie dans default.nix et nixfiles/.
+## Nginx + MariaDB + PHP development environment with Nix 
 
-### Installer l'outil Nix 
+Configuration is defined in default.nix and nixfiles/. www/ and admin/ are websites examples.
+
+### Installing  Nix
 
 ```
 bash <(curl https://nixos.org/nix/install)
 ```
 
-Ajout du dernier repo stable contenant les paquets voulus
+Add the last stable nix channel containing the packages we want
 
 ```
 nix-channel --add https://nixos.org/channels/nixos-18.09 nixos
 nix-channel --update
 ```
 
-Note: l'installation se fait dans le répertoire `/nix`, le reste du système n'est pas touché. Il suffit de supprimer ce répertoire pour désinstaller complètement l'outil et les paquets installés.
+Note: installation put all files in the `/nix` folder, the rest of the system is not touched. Just remove this directory to completely uninstall the tool and installed packages.
 
-### Utilisation
+### Usage
 
-La commande suivante permet d'activer l'environnement et de lancer les serveurs (une instance de Nginx,  PHP7 et MariaDB): `nix-shell`
+The following command activates the environment and starts the servers (an instance of Nginx, PHP7, and MariaDB): `nix-shell`
 
-Lors de la première exécution, nix va télécharger toutes les dépendances et créer les fichiers de configuration locaux, cela peut prendre un peu de temps.
+During the first run, nix will download all the dependencies and create the local configuration files, this may take a little while.
 
-Pour stopper les services : `make stop`, pour les relancer : `startServices`, pour sortir de l'environnement : `exit`.
+To stop the services: `make stop`, to restart them:` startServices`, to exit the environment: `exit`.
 
-Par défaut nginx écoute sur le port 8080 et MariaDB sur le port 3307 pour éviter les conflits avec d'éventuels services déjà lancés sur la machine (par défaut 80 pour apache/nginx et 3306 pour mysql/mariadb) ; il est possible de modifier ces valeurs en créant un fichier `nixfiles/config.nix`  sur le modèle de `nixfiles/config.dist.nix`
+By default nginx listens on port 8080 and MariaDB on port 3307 to avoid conflicts with any services already launched on the machine (default 80 for apache/nginx and 3306 for mysql/mariadb); it is possible to modify these values by creating a file `nixfiles/config.nix` on the model of `nixfiles/config.dist.nix`
 
-Le mot de passe MariaDB root est `admin` par défaut.
+The MariaDB root password is set to `admin`.
 
+Edit your `/etc/hosts` as follows:
 
-Modifiez votre `/etc/hosts` de la façon suivante :
 ```
 127.0.0.1 admin.localhost website.localhost
 
 ```
 
-Il est possible d'ajouter d'autre sites virtualhost en modifiant `niwfiles/nginx/nginx.conf.nix` : il suffit d'ajouter une ligne selon le modèle suivant en fin de fichier, juste avant la ligne  `upstream phpfcgi {` :
+Websites are visible at http://admin.localhost:8080 , http://website.localhost:8080 
+
+It is possible to add other virtualhost sites by modifying `nixfiles/nginx/nginx.conf.nix`: just add a line according to the following template at the end of the file, just before the line `upstream phpfcgi {` :
 
     include ${makeVirtualHost { domain = "admin.localhost"; path = (rootDir + "/admin");}};
 
-Les sites seront accessibles sur http://admin.localhost:8080 , http://website.localhost:8080 
+Nginx logs are in _nixfiles/nginx/logs/_
 
-Leurs logs nginx sont dans _nixfiles/nginx/logs/_
+**Database administration with _adminer_ :**
+
+Go to http://admin.localhost:8080/adminer.php and connect with the following elements (default configuration) : 
+
+- System : Mysql
+- Server : 127.0.0.1:3307
+- Username : root
+- Password : admin
 
