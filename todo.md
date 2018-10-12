@@ -1,6 +1,5 @@
 # TODO
 
-* nettoyer paquets inutiles
 * config admin mysql
 * Readme en/fr
 * exemples config php symfony, etc.

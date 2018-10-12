@@ -21,13 +21,15 @@ Note: l'installation se fait dans le répertoire `/nix`, le reste du système n'
 
 ### Utilisation
 
-La commande suivante permet d'activer l'environnement et de lancer les serveurs (une instance de Nginx,  PHP7 et MySQL): `nix-shell`
+La commande suivante permet d'activer l'environnement et de lancer les serveurs (une instance de Nginx,  PHP7 et MariaDB): `nix-shell`
 
 Lors de la première exécution, nix va télécharger toutes les dépendances et créer les fichiers de configuration locaux, cela peut prendre un peu de temps.
 
 Pour stopper les services : `make stop`, pour les relancer : `startServices`, pour sortir de l'environnement : `exit`.
 
-Par défaut nginx écoute sur le port 8080 et MySQL sur le port 3307 pour éviter les conflits avec d'éventuels services déjà lancés sur la machine (par défaut 80 pour apache/nginx et 3306 pour mysql) ; il est possible de modifier ces valeurs en créant un fichier `nixfiles/config.nix`  sur le modèle de `nixfiles/config.dist.nix`
+Par défaut nginx écoute sur le port 8080 et MariaDB sur le port 3307 pour éviter les conflits avec d'éventuels services déjà lancés sur la machine (par défaut 80 pour apache/nginx et 3306 pour mysql/mariadb) ; il est possible de modifier ces valeurs en créant un fichier `nixfiles/config.nix`  sur le modèle de `nixfiles/config.dist.nix`
+
+Le mot de passe MariaDB root est `admin` par défaut.
 
 
 Modifiez votre `/etc/hosts` de la façon suivante :
