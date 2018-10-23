@@ -43,7 +43,7 @@ http {
   include ${pkgs.writeText "mime.types" (builtins.readFile ./mime.types)};
   include ${pkgs.writeText "fastcgi.conf" (builtins.readFile ./fastcgi.conf)};
 
-  access_log ${nginxDir}/logs/fifpl_access.log;
+  access_log ${nginxDir}/logs/website_access.log;
 
 # optimisation
   sendfile on;
