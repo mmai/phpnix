@@ -9,6 +9,8 @@ let
     listen [::]:${nginxPort};
     server_name ${domain};
     root ${path}/;
+    access_log ${nginxDir}/logs/${domain}_access.log;
+    error_log ${nginxDir}/logs/${domain}_error.log;
 
     location / {
       index index.php;
@@ -24,8 +26,6 @@ let
       fastcgi_param DOCUMENT_ROOT $document_root;
     }
 
-    access_log ${nginxDir}/logs/${domain}_access.log;
-    error_log ${nginxDir}/logs/${domain}_error.log;
   }
     '';
 
@@ -92,6 +92,7 @@ http {
 
     server_name website.localhost;
     root ${rootDir}/www/;
+    error_log ${nginxDir}/logs/website_error.log;
 
     location / {
       index index.html index.php;
@@ -107,7 +108,6 @@ http {
       fastcgi_param DOCUMENT_ROOT $document_root;
 
     }
-    error_log ${nginxDir}/logs/website_error.log;
   }
 
   include ${makeVirtualHost { domain = "admin.localhost"; path = (rootDir + "/admin");}};
