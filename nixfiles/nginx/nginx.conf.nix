@@ -99,7 +99,7 @@ http {
     }
 
     location ~ (^/php/|\.php$) {
-      try_files $uri =404;
+#      try_files $uri =404;
 # this links to the defined upstream in 'appendHttpConfig'
       fastcgi_pass phpfcgi;
       fastcgi_index index.php;
