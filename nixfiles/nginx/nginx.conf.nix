@@ -28,6 +28,34 @@ let
 
   }
     '';
+# virtualhost pour symfony 4
+  makeVirtualHostSymfony = { domain, path }:
+    pkgs.writeText (domain + ".conf") ''
+  server {
+    listen ${nginxPort};
+    listen [::]:${nginxPort};
+    server_name ${domain};
+    root ${path}/;
+    access_log ${nginxDir}/logs/${domain}_access.log;
+    error_log ${nginxDir}/logs/${domain}_error.log;
+
+    location / {
+        # try to serve file directly, fallback to index.php
+        try_files $uri /index.php$is_args$args;
+    }
+
+    location ~ ^/index\.php(/|$) {
+      fastcgi_split_path_info ^(.+\.php)(/.*)$;
+  # this links to the defined upstream in 'appendHttpConfig'
+      fastcgi_pass phpfcgi;
+      fastcgi_index index.php;
+      include ${fastcgiParamsFile};
+      fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+      fastcgi_param DOCUMENT_ROOT $document_root;
+    }
+
+  }
+    '';
 
 in
 

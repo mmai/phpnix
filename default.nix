@@ -24,9 +24,10 @@ in
 stdenv.mkDerivation rec {
   name = "mywebapp-${version}";
   version = "0.1.0";
-  buildInputs = (with pkgs; [ phpPackages.xdebug phpPackages.composer nginx mysql ]); 
+  buildInputs = (with pkgs; [ php phpPackages.psysh phpPackages.xdebug phpPackages.composer nginx mysql ]); 
 
   shellHook = ''
+    alias php="${pkgs.php}/bin/php -c ${phpIni}"
     function startServices {
       if test -f ${nginxDir}/logs/nginx.pid && ps -p $(cat ${nginxDir}/logs/nginx.pid) > /dev/null; then
         echo "NGINX already started"
