@@ -28,6 +28,71 @@ let
 
   }
     '';
+
+  makeVirtualHostDrupal = { domain, path }:
+    pkgs.writeText (domain + ".conf") ''
+  server {
+    listen ${nginxPort};
+    listen [::]:${nginxPort};
+    server_name ${domain};
+    root ${path}/;
+    access_log ${nginxDir}/logs/${domain}_access.log;
+    error_log ${nginxDir}/logs/${domain}_error.log;
+
+    location / {
+        # try_files $uri @rewrite; # For Drupal <= 6
+        try_files $uri /index.php?$query_string; # For Drupal >= 7
+    }
+
+    location @rewrite {
+        rewrite ^/(.*)$ /index.php?q=$1;
+    }
+
+    # Don't allow direct access to PHP files in the vendor directory.
+    location ~ /vendor/.*\.php$ {
+        deny all;
+        return 404;
+    }
+
+    # In Drupal 8, we must also match new paths where the '.php' appears in
+    # the middle, such as update.php/selection. The rule we use is strict,
+    # and only allows this pattern with the update.php front controller.
+    # This allows legacy path aliases in the form of
+    # blog/index.php/legacy-path to continue to route to Drupal nodes. If
+    # you do not have any paths like that, then you might prefer to use a
+    # laxer rule, such as:
+    #   location ~ \.php(/|$) {
+    # The laxer rule will continue to work if Drupal uses this new URL
+    # pattern with front controllers other than update.php in a future
+    # release.
+    location ~ '\.php$|^/update.php' {
+      fastcgi_pass phpfcgi;
+      fastcgi_index index.php;
+      include ${fastcgiParamsFile};
+      fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+      fastcgi_param DOCUMENT_ROOT $document_root;
+    }
+
+    # Fighting with Styles? This little gem is amazing.
+    # location ~ ^/sites/.*/files/imagecache/ { # For Drupal <= 6
+    location ~ ^/sites/.*/files/styles/ { # For Drupal >= 7
+        try_files $uri @rewrite;
+    }
+
+    # Handle private files through Drupal. Private file's path can come
+    # with a language prefix.
+    location ~ ^(/[a-z\-]+)?/system/files/ { # For Drupal >= 7
+        try_files $uri /index.php?$query_string;
+    }
+
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+        try_files $uri @rewrite;
+        expires max;
+        log_not_found off;
+    }
+  }
+    '';
+    
 # virtualhost pour symfony 4
   makeVirtualHostSymfony = { domain, path }:
     pkgs.writeText (domain + ".conf") ''
