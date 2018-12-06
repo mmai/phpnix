@@ -23,7 +23,8 @@ Note: installation put all files in the `/nix` folder, the rest of the system is
 
 ### Usage
 
-The following command activates the environment and starts the servers (an instance of Nginx, PHP7, and MariaDB): `nix-shell`
+The following command activates the environment : `nix-shell`
+You can then start the services (an instance of Nginx, PHP7, and MariaDB) with `startServices`
 
 During the first run, nix will download all the dependencies and create the local configuration files, this may take a little while.
 

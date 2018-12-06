@@ -57,7 +57,6 @@ stdenv.mkDerivation rec {
         test -e ${mysqlDir}/data/initRequired && (echo "Initializing root password..." && sleep 5 && mysqladmin -uroot -h127.0.0.1 -P${cfg.mysqlPort} password "${cfg.mysqlPassword}" && rm -f ${mysqlDir}/data/initRequired)
       fi
     }
-    startServices
   '';
 
 }
