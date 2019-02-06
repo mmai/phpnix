@@ -19,12 +19,15 @@ let
   phpConf       = (import ./nixfiles/php/phpfpm-nginx.conf.nix) {inherit pkgs phpDir ;};
   phpIni        = (import ./nixfiles/php/phpini.nix) {inherit pkgs ;};
   nginxConf     = (import ./nixfiles/nginx/nginx.conf.nix) {inherit pkgs nginxDir rootDir phpDir; nginxPort = cfg.nginxPort; };
+
+  # Custom packages
+  drushLauncher = (import ./nixfiles/pkgs/drush-launcher/default.nix) {inherit stdenv fetchurl ;};
 in
 
 stdenv.mkDerivation rec {
   name = "mywebapp-${version}";
   version = "0.1.0";
-  buildInputs = (with pkgs; [ php phpPackages.psysh phpPackages.xdebug phpPackages.composer nginx mysql ]); 
+  buildInputs = (with pkgs; [ drushLauncher php phpPackages.psysh phpPackages.xdebug phpPackages.composer nginx mysql ]); 
 
   shellHook = ''
     alias php="${pkgs.php}/bin/php -c ${phpIni}"
