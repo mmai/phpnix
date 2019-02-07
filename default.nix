@@ -22,12 +22,13 @@ let
 
   # Custom packages
   drushLauncher = (import ./nixfiles/pkgs/drush-launcher/default.nix) {inherit stdenv fetchurl ;};
+  drupalConsole = (import ./nixfiles/pkgs/drupal-console/default.nix) {inherit stdenv fetchurl php72Packages ;};
 in
 
 stdenv.mkDerivation rec {
   name = "mywebapp-${version}";
   version = "0.1.0";
-  buildInputs = (with pkgs; [ drushLauncher php phpPackages.psysh phpPackages.xdebug phpPackages.composer nginx mysql ]); 
+  buildInputs = (with pkgs; [ drushLauncher drupalConsole php phpPackages.psysh phpPackages.xdebug phpPackages.composer nginx mysql ]); 
 
   shellHook = ''
     alias php="${pkgs.php}/bin/php -c ${phpIni}"
